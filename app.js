@@ -18,11 +18,31 @@ app.get('/send-reminders', (req, res) => {
             // Get current day of the week
             const currentDate = new Date();
             const currentDay = currentDate.getDay();
-            console.log(currentDay);
-            console.log(row);
+            // Array data to match the day of the week
+            const days = ['M', 'T', 'W', 'Th', 'F'];
+            // Split the days string into an array and match the days
+            const daysArray = row.Days.split('');
+            if (daysArray.includes('T') && daysArray.includes('h')) {
+              daysArray.splice(daysArray.indexOf('T'), 1);
+              daysArray.splice(daysArray.indexOf('h'), 1);
+              daysArray.push('Th');
+          }
+          console.log(daysArray)
+            // Check if the current day is in the daysArray
+            if (daysArray.includes(days[currentDay-1])) {
+                // Send the reminder
+                const message = `Remember to take ${row['Dosage']} of ${row['Medicine']} today!`;
+                client.messages
+                    .create({
+                        body: message,
+                        from: process.env.TWILIO_PHONE,
+                        to: `+${row.Number}`
+                    })
+                    .then(message => console.log(message.sid));
+            }
         })
         .on('end', () => {
-            res.send('Reminders sent!');
+            res.send('<h1>Reminders sent!</h1>');
         });
 });
 
