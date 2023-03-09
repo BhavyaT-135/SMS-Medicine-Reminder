@@ -12,14 +12,18 @@ app.get('/send-reminders', (req, res) => {
     const authToken = process.env.TWILIO_AUTH;
     const client = twilio(accountSid, authToken);
     
-    client.messages.create({
-          to: '+918287810214',
-          from: process.env.TWILIO_PHONE,
-          body: "This is a test message for Twilio!"
-      })
-      .then(
-        console.log("Message sent successfully")
-      );
+    fs.createReadStream('PatientData.csv')
+        .pipe(csv())
+        .on('data', (row) => {
+            // Get current day of the week
+            const currentDate = new Date();
+            const currentDay = currentDate.getDay();
+            console.log(currentDay);
+            console.log(row);
+        })
+        .on('end', () => {
+            res.send('Reminders sent!');
+        });
 });
 
 app.listen(3000, console.log(`Server is listening on port 3000...`))
