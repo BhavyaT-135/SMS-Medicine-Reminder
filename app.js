@@ -7,6 +7,11 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+app.get('/', (req, res) => {
+    // Send a button with bgcolor red and a link to the send-reminders route
+    res.send(`<button style="background-color: purple; color: white; font-size: 20px; padding: 10px 20px; margin-left: 20px; margin-top: 20px; border-radius: 5px; border: none;"><a href="/send-reminders" style="color: white;">Send Reminders</a></button>`);
+})
+
 app.get('/send-reminders', (req, res) => {
     const accountSid = process.env.TWILIO_SID;
     const authToken = process.env.TWILIO_AUTH;
